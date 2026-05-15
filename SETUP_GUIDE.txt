@@ -1,0 +1,92 @@
+===========================================
+TERRA LUXE (TERRAVA) - SETUP GUIDE
+===========================================
+
+Follow these steps to set up the project locally for development.
+
+-------------------------------------------
+1. PREREQUISITES
+-------------------------------------------
+- Node.js (v18+ recommended)
+- Java 17 (JDK)
+- Maven
+- MySQL Server (v8+)
+- Truffle Suite (npm install -g truffle)
+- Ganache (CLI or GUI)
+
+-------------------------------------------
+2. DATABASE SETUP (MySQL)
+-------------------------------------------
+1. Open your MySQL client and create the database:
+   CREATE DATABASE agrotrust;
+2. Ensure you have a root user with password `@Root` or update `backend/src/main/resources/application.properties` with your credentials:
+   DB_USERNAME=root
+   DB_PASSWORD=yourpassword
+
+-------------------------------------------
+3. BLOCKCHAIN SETUP (Truffle & Ganache)
+-------------------------------------------
+1. Start Ganache (running on http://127.0.0.1:9545).
+2. Open a terminal in the `blockchain/` directory:
+   cd blockchain
+3. Compile and migrate contracts:
+   truffle compile
+   truffle migrate --reset
+4. Copy the deployed contract address of `AgriSupplyChain` and `ProductRegistry`.
+5. Update `ETH_CONTRACT_ADDRESS` and `ETH_PRIVATE_KEY` in your environment or properties for the backend.
+
+-------------------------------------------
+4. BACKEND SETUP (Spring Boot)
+-------------------------------------------
+1. Open a terminal in the `backend/` directory:
+   cd backend
+2. Update environment variables or properties in `src/main/resources/application.properties` with your MySQL and Ganache details.
+3. Clean and build the application:
+   mvn clean install
+4. Run the Spring Boot application:
+   mvn spring-boot:run
+   The backend will start on http://localhost:8080.
+
+-------------------------------------------
+5. FRONTEND SETUP (React & Vite)
+-------------------------------------------
+1. Open a terminal in the `frontend/` directory:
+   cd frontend
+2. Install dependencies:
+   npm install
+3. Start the development server:
+   npm run dev
+   The frontend will start on http://localhost:3000 (or as specified by Vite).
+
+-------------------------------------------
+6. VERIFICATION
+-------------------------------------------
+- Navigate to http://localhost:3000 in your browser.
+- Create an account or log in.
+- Try registering a product to test the Web3j transaction flow.
+- Look out for the newly integrated CustomModals for prompts and alerts.
+
+-------------------------------------------
+7. VERIFYING BLOCKS & TRANSACTIONS ON GANACHE
+-------------------------------------------
+To verify that a block is successfully created and a transaction is built for every order, follow these steps using Ganache:
+
+If using Ganache GUI:
+1. Open the Ganache application.
+2. Navigate to the "Blocks" tab. You will see a list of mined blocks. Whenever you register a product or create an order from the Terra Luxe frontend, a new block will be mined here.
+3. Navigate to the "Transactions" tab. You will see the specific transaction hash, the sender (from), the contract address (to), and the gas used.
+4. Click on a specific transaction to view the input data. You can decode this data using the ABI from the `build/contracts/AgriSupplyChain.json` file to see the exact parameters passed (e.g., product name, price).
+
+If using Ganache CLI:
+1. Look at the terminal where you ran `ganache` or `truffle develop`.
+2. Every time a backend request goes through the `BlockchainService`, you will see a log output like:
+   `Transaction: 0x...`
+   `Gas usage: ...`
+   `Block Number: ...`
+3. You can also run the Truffle Console (`truffle console --network development`) and query the latest block or a specific transaction using Web3:
+   `let receipt = await web3.eth.getTransactionReceipt("0xYourTransactionHashHere")`
+   `let block = await web3.eth.getBlock("latest")`
+
+This confirms that the Java backend correctly encoded and signed a transaction, and it was successfully mined on the local blockchain.
+
+===========================================

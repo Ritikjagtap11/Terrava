@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+package-lock.json
+
+# Truffle build directory
+build/
+
+# environment
+.env
+
+# misc
+.DS_Store
